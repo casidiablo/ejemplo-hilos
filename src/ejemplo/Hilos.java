@@ -1,15 +1,23 @@
 package ejemplo;
 
-import java.util.Random;
-
 public class Hilos {
+
   public static void main(String[] args) {
     long comienzo = System.currentTimeMillis();
     int numeroDeProductos = 20;
 
-    Producto[] vectorA = generarCantidadesAleatorias(numeroDeProductos);
-    Producto[] vectorB = generarCantidadesAleatorias(numeroDeProductos);
+    Producto[] vectorA = new Producto[numeroDeProductos];
+    Producto[] vectorB = new Producto[numeroDeProductos];
 
+    Thread hilo1 = new Thread(new GeneradorDeProductos(vectorA));
+    Thread hilo2 = new Thread(new GeneradorDeProductos(vectorB));
+    hilo1.start();
+    hilo2.start();
+
+    while (hilo1.isAlive() || hilo2.isAlive()) {
+    }
+
+    ///.......
     Producto[] vectorC = new Producto[numeroDeProductos];
     for (int i = 0; i < numeroDeProductos; i++) {
       int cantidadA = vectorA[i].getCantidad();
@@ -45,32 +53,5 @@ public class Hilos {
     for (Producto producto : vectorC) {
       System.out.println(producto);
     }
-  }
-
-  private static Producto[] generarCantidadesAleatorias(int numeroDeProductos) {
-    Random random = new Random();
-    // crear arreglo producto con precio
-    Producto[] stock = new Producto[numeroDeProductos];
-    for (int i = 0; i < numeroDeProductos; i++) {
-      Producto producto = new Producto();
-      producto.setNombre("Producto #" + (i + 1));
-      stock[i] = producto;
-    }
-
-    // asignar una cantidad a los productos
-    int cantidadTotalProductos = 90_000_0000;
-    int productosGenerados = 0;
-    while (productosGenerados < cantidadTotalProductos) {
-      // determinar posicion del producto aleatorio
-      int posicionAleatoria = random.nextInt(numeroDeProductos);
-      // determinar cantidad aleatoria a agregar
-      int cantidadAAgregar = random.nextInt(10);
-      // obteniendo referencia al producto en posicion "posicionAleatoria"
-      Producto productoActual = stock[posicionAleatoria];
-      productoActual.setCantidad(cantidadAAgregar + productoActual.getCantidad());
-
-      productosGenerados += cantidadAAgregar;
-    }
-    return stock;
   }
 }
